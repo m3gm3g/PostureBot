@@ -4,7 +4,7 @@
 
 A tiny 8-bit bot that sits in a side pane of your terminal (next to Claude Code, vim, anything), bobs gently, and says out loud every so often:
 
-> "Hey Meg, just reminding you to check your posture. Love you!"
+> "Hey *Your name*, just reminding you to check your posture. Love you!"
 
 Free, no accounts, no dependencies. One Python file.
 
@@ -46,7 +46,7 @@ r  my reminder
 ## Options
 
 ```
-python3 posture_bot.py --name Meg --minutes 20
+python3 posture_bot.py --name "Your name" --minutes 20
 python3 posture_bot.py --voice Samantha --rate 165
 ```
 
@@ -59,4 +59,4 @@ python3 posture_bot.py --voice Samantha --rate 165
 
 ## License
 
-MIT. Made by Meg Schmidt / [Kitschy Lemon](https://github.com/m3gm3g).
+MIT. Made by Megan Schmidt / [Kitschy Lemon](https://github.com/m3gm3g).

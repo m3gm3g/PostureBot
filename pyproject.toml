@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "posturebot"
-version = "0.1.1"
+version = "0.1.2"
 description = "A tiny 8-bit terminal bot that bobs in a side pane and reminds you to check your posture."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.8"
-authors = [{ name = "Meg Schmidt" }]
+authors = [{ name = "Megan Schmidt" }]
 keywords = ["posture", "reminder", "terminal", "pixel-art", "wellness"]
 classifiers = [
     "Environment :: Console",
