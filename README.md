@@ -8,7 +8,15 @@ A tiny 8-bit bot that sits in a side pane of your terminal (next to Claude Code,
 
 Free, no accounts, no dependencies. One Python file.
 
-## Run it
+## Install
+
+```
+brew install m3gm3g/tap/posturebot      # macOS (Homebrew)
+pipx install posturebot                 # or with pipx
+posturebot
+```
+
+## Or just run it
 
 ```
 git clone https://github.com/m3gm3g/PostureBot.git

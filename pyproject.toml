@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "posturebot"
+version = "0.1.0"
+description = "A tiny 8-bit terminal bot that bobs in a side pane and reminds you to check your posture."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+authors = [{ name = "Meg Schmidt" }]
+keywords = ["posture", "reminder", "terminal", "pixel-art", "wellness"]
+classifiers = [
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+Homepage = "https://github.com/m3gm3g/PostureBot"
+
+[project.scripts]
+posturebot = "posture_bot:main"
+
+[tool.setuptools]
+py-modules = ["posture_bot"]
