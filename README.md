@@ -39,7 +39,7 @@ c  change name
 r  my reminder
 ```
 
-- **`+` / `-`** change the interval by 5 minutes.
+- **`+` / `-`** change the interval by 1 minute (never below 1).
 - **`b`** switches the bot between periwinkle and butter yellow.
 - **`r`** sets your own reminder. The bot speaks exactly what you type instead of the posture check. Clear it and press Enter to go back to the default.
 

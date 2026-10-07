@@ -269,7 +269,7 @@ def first_run_setup(cfg, args):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Cute posture reminder bot.")
+    ap = argparse.ArgumentParser(prog="posturebot", description="Cute posture reminder bot.")
     ap.add_argument("--name", help="what the bot calls you")
     ap.add_argument("--minutes", type=float, help="reminder interval in minutes")
     ap.add_argument("--voice", help="macOS voice name (try: say -v '?')")
@@ -339,11 +339,11 @@ def main():
             if key == "m":
                 muted = not muted
             if key in ("+", "="):
-                cfg["minutes"] += 5
+                cfg["minutes"] += 1
                 deadline = now + cfg["minutes"] * 60
                 save_config(cfg)
             if key in ("-", "_"):
-                cfg["minutes"] = max(1, cfg["minutes"] - 5)
+                cfg["minutes"] = max(1, cfg["minutes"] - 1)
                 deadline = now + cfg["minutes"] * 60
                 save_config(cfg)
 
