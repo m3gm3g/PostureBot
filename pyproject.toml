@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "posturebot"
-version = "0.1.2"
+version = "0.1.3"
 description = "A tiny 8-bit terminal bot that bobs in a side pane and reminds you to check your posture."
 readme = "README.md"
 license = { text = "MIT" }

@@ -12,18 +12,24 @@ for as long as it's running. Press q (or Ctrl+C) to stop.
 Keys:  q quit   n remind me now   + / - change minutes   m mute voice   b bot color   c change name   r my reminder
 """
 import argparse
-import fcntl
+import base64
 import json
 import os
 import platform
-import select
 import shutil
 import subprocess
 import sys
 import time
 
+IS_WIN = os.name == "nt"
+if IS_WIN:
+    import msvcrt
+else:
+    import fcntl
+    import select
+
 CONFIG = os.path.expanduser("~/.posture-bot.json")
-DEFAULTS = {"name": "", "minutes": 30, "voice": "Samantha", "rate": None, "color": "periwinkle", "custom": ""}
+DEFAULTS = {"name": "", "minutes": 30, "voice": "Kathy", "rate": None, "color": "periwinkle", "custom": ""}
 
 BODY = "\033[38;2;156;168;255m"   # periwinkle
 ACCENT = "\033[38;2;255;182;213m"  # blush
@@ -59,6 +65,19 @@ def message(cfg):
     return f"{who} just reminding you to check your posture. Love you!"
 
 
+WIN_SPEECH = """
+Add-Type -AssemblyName System.Speech
+$s = New-Object System.Speech.Synthesis.SpeechSynthesizer
+$v = $env:PB_VOICE
+if ($v) {
+    $m = $s.GetInstalledVoices() | Where-Object { $_.VoiceInfo.Name -like ('*' + $v + '*') } | Select-Object -First 1
+    if ($m) { $s.SelectVoice($m.VoiceInfo.Name) }
+}
+if ($env:PB_RATE) { $s.Rate = [int]$env:PB_RATE }
+$s.Speak($env:PB_TEXT)
+"""
+
+
 def speak(text, voice, rate):
     """Start speech without blocking. Returns the Popen handle (or None)."""
     system = platform.system()
@@ -66,6 +85,15 @@ def speak(text, voice, rate):
         if system == "Darwin":
             cmd = ["say", "-v", voice] + (["-r", str(rate)] if rate else []) + [text]
             return subprocess.Popen(cmd)
+        if system == "Windows":
+            # SAPI via PowerShell; text/voice go in env vars so nothing needs quoting.
+            # A voice name with no match (e.g. the macOS default, Kathy) uses the system voice.
+            env = dict(os.environ, PB_TEXT=text, PB_VOICE=voice or "",
+                       PB_RATE=str(max(-10, min(10, round((rate - 170) / 15)))) if rate else "")
+            script = base64.b64encode(WIN_SPEECH.encode("utf-16-le")).decode()
+            return subprocess.Popen(
+                ["powershell", "-NoProfile", "-NonInteractive", "-EncodedCommand", script],
+                env=env, creationflags=0x08000000)    # CREATE_NO_WINDOW
         for tts in ("espeak-ng", "espeak", "spd-say"):
             if shutil.which(tts):
                 return subprocess.Popen([tts, text])
@@ -240,9 +268,46 @@ def render(cfg, remaining, t, talking, muted, flash, editing=None):
 
 
 def read_key():
+    if IS_WIN:
+        if msvcrt.kbhit():
+            ch = msvcrt.getwch()
+            if ch in ("\x00", "\xe0"):          # arrow/function key: swallow its second code
+                msvcrt.getwch()
+                return ""
+            return ch
+        return ""
     if select.select([sys.stdin], [], [], 0)[0]:
         return sys.stdin.read(1)
     return ""
+
+
+def wait_for_key(seconds):
+    """Sleep up to `seconds`, waking early on a keypress."""
+    if IS_WIN:
+        end = time.time() + seconds
+        while time.time() < end and not msvcrt.kbhit():
+            time.sleep(0.01)
+    else:
+        select.select([sys.stdin], [], [], seconds)
+
+
+def lock_file(f):
+    """Raise OSError if another copy holds the lock."""
+    if IS_WIN:
+        msvcrt.locking(f.fileno(), msvcrt.LK_NBLCK, 1)
+    else:
+        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+
+def setup_windows_console():
+    """Turn on ANSI colors/cursor moves and UTF-8 output (Windows 10+)."""
+    import ctypes
+    k32 = ctypes.windll.kernel32
+    handle = k32.GetStdHandle(-11)
+    mode = ctypes.c_uint32()
+    if k32.GetConsoleMode(handle, ctypes.byref(mode)):
+        k32.SetConsoleMode(handle, mode.value | 0x0004)    # ENABLE_VIRTUAL_TERMINAL_PROCESSING
+    sys.stdout.reconfigure(encoding="utf-8")
 
 
 def first_run_setup(cfg, args):
@@ -272,13 +337,15 @@ def main():
     ap = argparse.ArgumentParser(prog="posturebot", description="Cute posture reminder bot.")
     ap.add_argument("--name", help="what the bot calls you")
     ap.add_argument("--minutes", type=float, help="reminder interval in minutes")
-    ap.add_argument("--voice", help="macOS voice name (try: say -v '?')")
-    ap.add_argument("--rate", type=int, help="speech rate, words/min (macOS); default is the voice's own speed")
+    ap.add_argument("--voice", help="voice name (macOS: say -v '?'; Windows: part of an installed voice name, e.g. Zira)")
+    ap.add_argument("--rate", type=int, help="speech rate, words/min; default is the voice's own speed")
     args = ap.parse_args()
 
+    if IS_WIN:
+        setup_windows_console()
     lock = open(os.path.expanduser("~/.posture-bot.lock"), "w")
     try:
-        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        lock_file(lock)
     except OSError:
         sys.exit("posture-bot is already running in another pane - close that one first.")
 
@@ -290,11 +357,12 @@ def main():
             cfg[k] = v
     save_config(cfg)
 
-    import termios
-    import tty
-    fd = sys.stdin.fileno()
-    old = termios.tcgetattr(fd)
-    tty.setcbreak(fd)
+    if not IS_WIN:
+        import termios
+        import tty
+        fd = sys.stdin.fileno()
+        old = termios.tcgetattr(fd)
+        tty.setcbreak(fd)
     sys.stdout.write("\033[?1049h\033[2J")    # alternate screen: leaves no scrollback junk
 
     muted = False
@@ -355,13 +423,14 @@ def main():
 
             talking = bool(proc and proc.poll() is None and int((now - start) * 6) % 2)
             render(cfg, deadline - now, now - start, talking, muted, now < flash_until, editing)
-            select.select([sys.stdin], [], [], 0.1)   # wake instantly on a keypress
+            wait_for_key(0.1)                          # wake instantly on a keypress
     except KeyboardInterrupt:
         pass
     finally:
         if proc and proc.poll() is None:
             proc.terminate()
-        termios.tcsetattr(fd, termios.TCSANOW, old)
+        if not IS_WIN:
+            termios.tcsetattr(fd, termios.TCSANOW, old)
         sys.stdout.write(f"\033[?7h\033[?25h\033[?1049l{BODY}bye! sit tall ♡{RESET}\n")
 
 

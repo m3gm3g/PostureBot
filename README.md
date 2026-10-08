@@ -12,7 +12,7 @@ Free, no accounts, no dependencies. One Python file.
 
 ```
 brew install m3gm3g/tap/posturebot      # macOS (Homebrew)
-pipx install posturebot                 # or with pipx
+pipx install posturebot                 # or with pipx (macOS, Linux, Windows)
 posturebot
 ```
 
@@ -47,14 +47,15 @@ r  my reminder
 
 ```
 python3 posture_bot.py --name "Your name" --minutes 20
-python3 posture_bot.py --voice Samantha --rate 165
+python3 posture_bot.py --voice Samantha --rate 165     # macOS
+python3 posture_bot.py --voice Zira                    # Windows (part of an installed voice's name)
 ```
 
 ## Requirements
 
-- **macOS** (tested): uses the built-in `say` voice. Try `say -v '?'` for voices; the default is `Samantha`.
+- **macOS** (tested): uses the built-in `say` voice. Try `say -v '?'` for voices; the default is `Kathy`.
 - **Linux** (untested): works if `espeak-ng`, `espeak` or `spd-say` is installed.
-- **Windows**: not supported (it uses `termios`/`fcntl`; WSL should work).
+- **Windows** (new, untested): needs Windows 10+ and Windows Terminal (or a recent console). Speaks with the built-in Windows voices through PowerShell. The default voice, Kathy, is a Mac voice, so Windows uses your system voice unless you pass `--voice` (e.g. `--voice Zira`). Use `python` or `py` instead of `python3`. If you try it, please tell me how it goes.
 - Python 3 (tested on 3.14) and a terminal with true-color support.
 
 ## License
