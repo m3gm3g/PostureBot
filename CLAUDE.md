@@ -35,7 +35,7 @@ No test suite. Verify by driving it in a pty (`pty.fork`), **always draining out
 
 ## Automated release (GitHub Actions)
 
-`.github/workflows/ci.yml` smoke-tests on Linux/macOS/Windows. `release.yml` runs on a pushed `v*` tag: checks tag == pyproject version, builds, `pipx run twine upload --skip-existing` to PyPI (secret `PYPI_API_TOKEN`, environment `pypi`), creates/updates the GitHub release, and updates the tap formula (secret `TAP_GITHUB_TOKEN`). With this in place, steps 2-7 above are automatic after bumping the version and pushing the tag.
+`.github/workflows/ci.yml` smoke-tests on Linux/macOS/Windows. `release.yml` runs on a pushed `v*` tag: checks tag == pyproject version, builds, `pipx run twine upload --skip-existing` to PyPI (secret `PYPI_API_TOKEN`, environment `pypi`), creates/updates the GitHub release, and updates the tap formula (secret `TAP_GITHUB_TOKEN`). `ghcr.yml` also fires on the tag and pushes `ghcr.io/m3gm3g/posturebot:<version>` + `:latest` (multi-arch, built from `Dockerfile`, uses `GITHUB_TOKEN`; image is visual-only, no audio). GitHub Packages has no PyPI registry, so GHCR is the fit. With this in place, steps 2-7 above are automatic after bumping the version and pushing the tag.
 
 ## Workflow rules
 

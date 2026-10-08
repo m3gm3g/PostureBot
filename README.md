@@ -16,6 +16,14 @@ pipx install posturebot                 # or with pipx (macOS, Linux, Windows)
 posturebot
 ```
 
+## Docker
+
+```
+docker run -it --rm ghcr.io/m3gm3g/posturebot
+```
+
+The bot shows up and bobs, but containers have no sound, so there is no speech. Use brew or pipx for the voice.
+
 ## Or just run it
 
 ```
