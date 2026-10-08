@@ -431,7 +431,7 @@ def main():
             proc.terminate()
         if not IS_WIN:
             termios.tcsetattr(fd, termios.TCSANOW, old)
-        sys.stdout.write(f"\033[?7h\033[?25h\033[?1049l{BODY}bye! sit tall ♡{RESET}\n")
+        sys.stdout.write(f"\033[?7h\033[?25h\033[?1049l{BODY}bye! chin up ♡{RESET}\n")
 
 
 if __name__ == "__main__":
