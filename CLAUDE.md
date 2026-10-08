@@ -43,6 +43,10 @@ No test suite. Verify by driving it in a pty (`pty.fork`), **always draining out
 - Commit trailer: `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`.
 - Keep README in sync with behavior in the same commit (interval step, keys, examples use *Your name*, credit line is Megan Schmidt).
 
-## Status (2026-10-07)
+## Status (2026-10-08)
 
-0.1.5 live on GitHub, Homebrew tap, and PyPI (0.1.3 on PyPI is a superseded older build). Old account-wide PyPI token deleted (per Meg); uploads use a project-scoped token. Open: npm `posturebot` unclaimed (optional `npx` wrapper, undecided); domains posturebot.io/.xyz looked free. Related memory: `posturebot-project.md`.
+0.1.5 live on PyPI, GitHub, Homebrew tap, and ghcr.io, all published by Actions from a `v*` tag (secrets `PYPI_API_TOKEN`, `TAP_GITHUB_TOKEN` set; `GITHUB_TOKEN` covers ghcr). Old account-wide PyPI token deleted (per Meg). No local Docker (MacBook Neo); containers only via CI. Open: npm wrapper (undecided), posturebot.io/.xyz domain, Windows/Linux untested, `TAP_GITHUB_TOKEN` expires in about a year (renew). Related memory: `posturebot-project.md`.
+
+## Next feature
+
+Meg says what she wants; build it in `posture_bot.py`, test in a pty (see Testing), update README + this file in the same commit, then ship: bump `pyproject.toml`, push, tag `vX.Y.Z`. Actions does the rest. Verify PyPI/GitHub/tap after.
