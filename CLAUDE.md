@@ -33,6 +33,10 @@ No test suite. Verify by driving it in a pty (`pty.fork`), **always draining out
 6. `rm -rf dist build *.egg-info && pipx run build`.
 7. **Meg uploads to PyPI herself**: `pipx run twine upload ~/posture-bot/dist/*` (user `__token__`). PyPI versions are immutable. Never handle or ask for her token.
 
+## Automated release (GitHub Actions)
+
+`.github/workflows/ci.yml` smoke-tests on Linux/macOS/Windows. `release.yml` runs on a pushed `v*` tag: checks tag == pyproject version, builds, `pipx run twine upload --skip-existing` to PyPI (secret `PYPI_API_TOKEN`, environment `pypi`), creates/updates the GitHub release, and updates the tap formula (secret `TAP_GITHUB_TOKEN`). With this in place, steps 2-7 above are automatic after bumping the version and pushing the tag.
+
 ## Workflow rules
 
 - Don't commit, push, tag, or publish unless Meg asks; she has asked for each release explicitly.
