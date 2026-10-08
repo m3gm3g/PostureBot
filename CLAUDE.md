@@ -45,4 +45,4 @@ No test suite. Verify by driving it in a pty (`pty.fork`), **always draining out
 
 ## Status (2026-10-07)
 
-0.1.4 live on GitHub, Homebrew tap, and PyPI (0.1.3 on PyPI is a superseded older build). Old account-wide PyPI token deleted (per Meg); uploads use a project-scoped token. Open: npm `posturebot` unclaimed (optional `npx` wrapper, undecided); domains posturebot.io/.xyz looked free. Related memory: `posturebot-project.md`.
+0.1.5 live on GitHub, Homebrew tap, and PyPI (0.1.3 on PyPI is a superseded older build). Old account-wide PyPI token deleted (per Meg); uploads use a project-scoped token. Open: npm `posturebot` unclaimed (optional `npx` wrapper, undecided); domains posturebot.io/.xyz looked free. Related memory: `posturebot-project.md`.
