@@ -39,7 +39,7 @@ No test suite. Verify by driving it in a pty (`pty.fork`), **always draining out
 
 ## Workflow rules
 
-- Don't commit, push, tag, or publish unless Meg asks; she has asked for each release explicitly.
+- Meg's standing rule: a request is approval to take it all the way out (commit, push, tag, release) without asking again. Never handle her tokens; she pastes secrets and runs logins herself.
 - Commit trailer: `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`.
 - Keep README in sync with behavior in the same commit (interval step, keys, examples use *Your name*, credit line is Megan Schmidt).
 
