@@ -68,4 +68,4 @@ python3 posture_bot.py --voice Zira                    # Windows (part of an ins
 
 ## License
 
-MIT. Made by [Megan Schmidt](https://megyschmidt.com) / [Kitschy Lemon](https://github.com/m3gm3g).
+MIT. Made by [Megan Schmidt](https://megyschmidt.com) / [Kitschy Lemon](https://kitschylemon.com).
