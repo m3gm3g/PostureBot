@@ -50,3 +50,28 @@ No test suite. Verify by driving it in a pty (`pty.fork`), **always draining out
 ## Next feature
 
 Meg says what she wants; build it in `posture_bot.py`, test in a pty (see Testing), update README + this file in the same commit, then ship: bump `pyproject.toml`, push, tag `vX.Y.Z`. Actions does the rest. Verify PyPI/GitHub/tap after.
+
+## Running it on Meg's Mac mini (added 2026-11-05)
+
+PostureBot was built and tested on Meg's MacBook Neo. Her older Mac mini (Macmini9,1, macOS 26.5.1, 1920x1080) needs these steps for it to look and run right:
+
+- **Python 3.14, not the system `python3`.** There, plain `python3` resolves to Xcode's bundled Python 3.9. Run the bot with Homebrew's `/opt/homebrew/bin/python3.14` (`brew install python@3.14`; 3.14.10 as of this note). Permanent clone: `~/posture-bot`.
+- **Always a narrow side pane, never its own full-size window.** Claude Code runs in Apple Terminal, which can't put a second program in a split pane, and tmux isn't installed. Open a new Terminal window and dock it flush against the right edge of the Claude Code window, at the same top and bottom and about 240 px (~29 cols) wide. The panel is 18 cols, so it needs at least ~20.
+- **Opaque Terminal profile.** The mini's default profile, "Clear Dark", is translucent with blur. The face is drawn as background-colored cells and the edges as opaque `▀`/`▄` glyphs, so under a translucent profile the face looks washed out and the edges stay solid, giving a striped, "splitty" bot that doesn't match `assets/posturebot.png`. Set the bot's tab to "Basic" (opaque). The sprite code itself is unchanged.
+- **`brew install m3gm3g/tap/posturebot` is blocked** on the mini until the Command Line Tools are updated. Brew says: "Your Command Line Tools (CLT) does not support macOS 26." Meg has to update them herself, since that needs sudo (Software Update, or `sudo rm -rf /Library/Developer/CommandLineTools && sudo xcode-select --install`). Until then, run from the clone with python3.14.
+
+Launch recipe (AppleScript, Claude Code window id from `tell application "Terminal" to get {id, bounds} of every window`):
+
+```applescript
+tell application "Terminal"
+  set cb to bounds of window id CLAUDE_WINDOW_ID
+  set w to do script "clear; /opt/homebrew/bin/python3.14 ~/posture-bot/posture_bot.py"
+  delay 0.5
+  set win to (first window whose selected tab is w)
+  set current settings of w to settings set "Basic"
+  set bounds of win to {(item 3 of cb) + 2, item 2 of cb, (item 3 of cb) + 242, item 4 of cb}
+  set custom title of w to "PostureBot"
+end tell
+```
+
+Possible future fix in code: paint solid cells with a full block `█` in the foreground color instead of a background-colored space, so the bot looks right even in translucent profiles.
